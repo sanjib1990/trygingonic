@@ -30,4 +30,32 @@ func RegisterRoutes(engine *gin.Engine) {
             "a": "b",
         }, 200, "Success")
     })
+
+    engine.POST("/api/validate", func(c *gin.Context) {
+        Logger.Get().Info("This is INFO")
+        response.Send(c, gin.H{
+            "results": []int{},
+        }, 200, "Success")
+    })
+
+    engine.POST("/api/suggestions/suggest", func(c *gin.Context) {
+        Logger.Get().Info("This is INFO")
+        response.Send(c, gin.H{
+            "results": []int{},
+        }, 200, "Success")
+    })
+
+    engine.POST("/api/suggestions/fetch", func(c *gin.Context) {
+        Logger.Get().Info("This is INFO")
+        response.Send(c, gin.H{
+            "rules": []int{},
+        }, 200, "Success")
+    })
+
+    engine.POST("/api/validate/mlid", func(c *gin.Context) {
+        Logger.Get().Info("This is INFO")
+        response.Send(c, gin.H{
+            "results": []int{},
+        }, 200, "Success")
+    })
 }

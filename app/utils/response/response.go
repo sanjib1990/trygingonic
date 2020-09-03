@@ -18,5 +18,6 @@ func Send(c *gin.Context, T interface{}, code int, message string) {
 		"status": http.StatusText(code),
 		"message": message,
 		"data": T,
+		"code": code,
 	})
 }
