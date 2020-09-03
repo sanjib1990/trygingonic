@@ -30,4 +30,11 @@ func RegisterRoutes(engine *gin.Engine) {
             "a": "b",
         }, 200, "Success")
     })
+
+    engine.POST("/api/validate", func(c *gin.Context) {
+        Logger.Get().Info("This is INFO")
+        response.Send(c, gin.H{
+            "result": []int{},
+        }, 200, "Success")
+    })
 }
