@@ -44,4 +44,11 @@ func RegisterRoutes(engine *gin.Engine) {
             "results": []int{},
         }, 200, "Success")
     })
+
+    engine.POST("/api/suggestions/fetch", func(c *gin.Context) {
+        Logger.Get().Info("This is INFO")
+        response.Send(c, gin.H{
+            "rules": []int{},
+        }, 200, "Success")
+    })
 }
