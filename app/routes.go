@@ -51,4 +51,11 @@ func RegisterRoutes(engine *gin.Engine) {
             "rules": []int{},
         }, 200, "Success")
     })
+
+    engine.POST("/api/validate/mlid", func(c *gin.Context) {
+        Logger.Get().Info("This is INFO")
+        response.Send(c, gin.H{
+            "results": []int{},
+        }, 200, "Success")
+    })
 }
