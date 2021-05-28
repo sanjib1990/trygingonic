@@ -15,9 +15,9 @@ func Send(c *gin.Context, T interface{}, code int, message string) {
 	}
 
 	c.JSON(code, gin.H{
-		"status": http.StatusText(code),
-		"message": message,
-		"data": T,
-		"code": code,
+		"status"	: http.StatusText(code),
+		"message"	: message,
+		"data"		: T,
+		"code"		: code,
 	})
 }
