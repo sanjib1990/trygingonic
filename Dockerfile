@@ -4,7 +4,7 @@ RUN mkdir /build
 
 ADD . /build
 WORKDIR /build
-RUN go build -race -o runner .
+RUN apk update && apk add --no-cache build-base && GOOS=linux GOARCH=amd64 go build -race -o runner .
 
 FROM scratch
 COPY --from=builder /build/runner /app/
