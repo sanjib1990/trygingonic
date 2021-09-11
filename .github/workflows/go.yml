@@ -22,7 +22,7 @@ jobs:
       run: go test -race -v -failfast
 
     - name: Build
-      run: go build -race -o runner
+      run: go clean -cache && CGO_ENABLED=1 go build -race -o runner
     
     - uses: mr-smithers-excellent/docker-build-push@v5
       name: Build & push Docker image
