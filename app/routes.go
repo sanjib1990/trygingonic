@@ -1,11 +1,12 @@
 package app
 
 import (
-	"github.com/gin-gonic/gin"
 	"runtime"
 	"strconv"
 	"trygonic/app/utils/Logger"
 	"trygonic/app/utils/response"
+
+	"github.com/gin-gonic/gin"
 )
 
 func trace2() {
@@ -17,6 +18,13 @@ func trace2() {
 }
 
 func RegisterRoutes(engine *gin.Engine) {
+	engine.GET("/ping", func(c *gin.Context) {
+		Logger.Get().Info("This is INFO")
+		response.Send(c, gin.H{
+			"a": "b",
+		}, 200, "Success")
+	})
+
 	engine.GET("/ping/:id", func(c *gin.Context) {
 		Logger.Get().Info("This is INFO")
 		response.Send(c, gin.H{
