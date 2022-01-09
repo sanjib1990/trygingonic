@@ -2,12 +2,13 @@ package config
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 var cfg map[string]string
@@ -58,9 +59,9 @@ func init() {
 	_env := get("ENV", "local")
 	Values = &config{}
 
-	Values.Env 		= _env
-	Values.IsProd 	= _env == "prod" || _env == "release"
-	Values.Port 	= get("PORT", "8080")
+	Values.Env = _env
+	Values.IsProd = _env == "prod" || _env == "release"
+	Values.Port = get("PORT", "8080")
 	Values.LogLevel = get("LOG_LEVEL", "INFO")
 }
 

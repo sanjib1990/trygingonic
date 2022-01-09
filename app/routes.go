@@ -1,6 +1,7 @@
 package app
 
 import (
+	"net/http"
 	"runtime"
 	"strconv"
 	"trygonic/app/utils/Logger"
@@ -19,51 +20,56 @@ func trace2() {
 
 func RegisterRoutes(engine *gin.Engine) {
 	engine.GET("/ping", func(c *gin.Context) {
-		Logger.Get().Info("This is INFO")
+		Logger.Get().Info("Ping")
 		response.Send(c, gin.H{
-			"a": "b",
-		}, 200, "Success")
+			"all": "ok",
+		}, http.StatusOK, http.StatusText(http.StatusOK))
 	})
 
 	engine.GET("/ping/:id", func(c *gin.Context) {
-		Logger.Get().Info("This is INFO")
+		Logger.Get().Info("GET Ping ID " + c.Param("id"))
 		response.Send(c, gin.H{
-			"a": "b",
-		}, 200, "Success")
+			"ok": c.Param("id"),
+		}, http.StatusOK, http.StatusText(http.StatusOK))
 	})
 
 	engine.POST("/ping/:id", func(c *gin.Context) {
-		Logger.Get().Info("This is INFO")
+		Logger.Get().Info("POST Ping ID " + c.Param("id"))
 		response.Send(c, gin.H{
-			"a": "b",
-		}, 200, "Success")
+			"ok": c.Param("id"),
+		}, http.StatusOK, http.StatusText(http.StatusOK))
 	})
 
 	engine.POST("/api/validate", func(c *gin.Context) {
-		Logger.Get().Info("This is INFO")
+		Logger.Get().Info("validate")
 		response.Send(c, gin.H{
 			"results": []int{},
-		}, 200, "Success")
+		}, http.StatusOK, http.StatusText(http.StatusOK))
 	})
 
 	engine.POST("/api/suggestions/suggest", func(c *gin.Context) {
-		Logger.Get().Info("This is INFO")
+		Logger.Get().Info("Suggestions suggest")
 		response.Send(c, gin.H{
 			"results": []int{},
-		}, 200, "Success")
+		}, http.StatusOK, http.StatusText(http.StatusOK))
 	})
 
 	engine.POST("/api/suggestions/fetch", func(c *gin.Context) {
-		Logger.Get().Info("This is INFO")
+		Logger.Get().Info("Suggestions fetch")
 		response.Send(c, gin.H{
 			"rules": []int{},
-		}, 200, "Success")
+		}, http.StatusOK, http.StatusText(http.StatusOK))
 	})
 
 	engine.POST("/api/validate/mlid", func(c *gin.Context) {
-		Logger.Get().Info("This is INFO")
+		Logger.Get().Info("validate mlid")
 		response.Send(c, gin.H{
 			"results": []int{},
-		}, 200, "Success")
+		}, http.StatusOK, http.StatusText(http.StatusOK))
+	})
+
+	engine.NoRoute(func(c *gin.Context) {
+		Logger.Get().Info("Route not found")
+		response.Send(c, gin.H{}, http.StatusNotFound, http.StatusText(http.StatusNotFound))
 	})
 }

@@ -1,18 +1,18 @@
 package middlewares
 
 import (
-	"github.com/gin-gonic/gin"
-	jsoniter "github.com/json-iterator/go"
 	"strconv"
 	"strings"
 	"trygonic/app/utils/Logger"
+
+	"github.com/gin-gonic/gin"
+	jsoniter "github.com/json-iterator/go"
 )
 
 func RequestLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var str strings.Builder
 		str.Write([]byte("[REQUEST RECEIVED]"))
-		str.Write([]byte(" " + c.Request.UserAgent()))
 
 		// append Method
 		str.Write([]byte(" " + c.Request.Method))
@@ -32,7 +32,8 @@ func RequestLogger() gin.HandlerFunc {
 		body, _ := c.GetRawData()
 		var s strings.Builder
 		s.Write(body)
-		str.Write([]byte(" | [BODY]: \n" + s.String()))
+		str.Write([]byte(" | [BODY]: " + s.String()))
+		str.Write([]byte(" | [AGENT]: " + c.Request.UserAgent()))
 
 		Logger.Get().Info(str.String())
 		// before request
