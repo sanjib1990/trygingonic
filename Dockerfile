@@ -4,9 +4,15 @@ RUN mkdir /build
 
 ADD . /build
 WORKDIR /build
-RUN apk update && apk add --no-cache build-base && GOOS=linux GOARCH=amd64 go build -race -o runner .
+RUN apk update  \
+    && apk add --virtual  \
+    build-dependencies  \
+    build-base  \
+    gcc  \
+    && go mod vendor  \
+    && go build -race -o runner .
 
-FROM scratch
+FROM alpine:3.14.0
 COPY --from=builder /build/runner /app/
 WORKDIR /app
 
