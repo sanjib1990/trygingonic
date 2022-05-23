@@ -63,11 +63,15 @@ func init() {
 	Values.IsProd = _env == "prod" || _env == "release"
 	Values.Port = get("PORT", "8080")
 	Values.LogLevel = get("LOG_LEVEL", "INFO")
+	Values.AuthSecret = get("AUTH_SECRET", "INFO")
+	Values.AuthKey = get("AUTH_KEY", "INFO")
 }
 
 type config struct {
-	Port     string
-	Env      string
-	IsProd   bool
-	LogLevel string
+	Port       string
+	Env        string
+	IsProd     bool
+	LogLevel   string
+	AuthKey    string
+	AuthSecret string
 }
