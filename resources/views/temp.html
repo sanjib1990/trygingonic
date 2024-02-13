@@ -1,0 +1,18 @@
+<html>
+<h4>Hi This is a template {{ .name }}</h4>
+<hr>
+{{ if .render_profile }}
+    We are rendering profile
+{{ else if .render_name }}
+    We are rendering Name
+{{ else }}
+   Default rendering
+{{ end }}
+<script>
+    let a = "something"
+    window.test = "some dynamic data";
+    {{ if .alert }}
+    alert("something alert")
+    {{end}}
+</script>
+</html>

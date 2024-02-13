@@ -1,7 +1,9 @@
 package app
 
 import (
+	"html/template"
 	"net/http"
+	"os"
 	"runtime"
 	"strconv"
 	"trygonic/app/config"
@@ -172,6 +174,48 @@ func RegisterRoutes(engine *gin.Engine) {
 		response.Send(c, gin.H{
 			"results": []int{},
 		}, http.StatusOK, http.StatusText(http.StatusOK))
+	})
+
+	engine.POST("/sumo/post", func(c *gin.Context) {
+		buf := make([]byte, c.Request.ContentLength)
+		_, _ = c.Request.Body.Read(buf)
+		_ = c.Request.Body.Close()
+		Logger.Get().Info("SUMO request received " + string(buf))
+		response.Send(c, gin.H{}, http.StatusOK, http.StatusText(http.StatusOK))
+	})
+
+	engine.GET("/render/view", func(c *gin.Context) {
+		renderMap := map[string]interface{}{
+			"render_profile": c.Request.URL.Query().Has("render_profile"),
+			"render_name":    c.Request.URL.Query().Has("render_name"),
+			"name":           c.Request.URL.Query().Get("name"),
+			"alert":          c.Request.URL.Query().Has("alert"),
+		}
+
+		wd, _ := os.Getwd()
+		t, err := template.ParseFiles(wd + "/resources/views/temp.html")
+
+		if err != nil {
+			Logger.Get().Info("Parse error " + err.Error())
+			c.String(200, err.Error())
+			return
+		}
+
+		err = t.Execute(c.Writer, renderMap)
+		if err != nil {
+			Logger.Get().Info("Template Err " + err.Error())
+		}
+	})
+
+	engine.GET("/render/view/gin", func(c *gin.Context) {
+		renderMap := map[string]interface{}{
+			"render_profile": c.Request.URL.Query().Has("render_profile"),
+			"render_name":    c.Request.URL.Query().Has("render_name"),
+			"name":           c.Request.URL.Query().Get("name"),
+		}
+
+		//wd, _ := os.Getwd()
+		c.HTML(200, "temp.html", renderMap)
 	})
 
 	engine.NoRoute(func(c *gin.Context) {
