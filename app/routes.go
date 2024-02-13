@@ -1,7 +1,10 @@
 package app
 
 import (
+	"encoding/json"
+	"html/template"
 	"net/http"
+	"os"
 	"runtime"
 	"strconv"
 	"trygonic/app/config"
@@ -172,6 +175,83 @@ func RegisterRoutes(engine *gin.Engine) {
 		response.Send(c, gin.H{
 			"results": []int{},
 		}, http.StatusOK, http.StatusText(http.StatusOK))
+	})
+
+	engine.POST("/sumo/post", func(c *gin.Context) {
+		buf := make([]byte, c.Request.ContentLength)
+		_, _ = c.Request.Body.Read(buf)
+		_ = c.Request.Body.Close()
+		Logger.Get().Info("SUMO request received " + string(buf))
+		response.Send(c, gin.H{}, http.StatusOK, http.StatusText(http.StatusOK))
+	})
+
+	engine.GET("/render/view", func(c *gin.Context) {
+		renderMap := map[string]interface{}{
+			"render_profile": c.Request.URL.Query().Has("render_profile"),
+			"render_name":    c.Request.URL.Query().Has("render_name"),
+			"name":           c.Request.URL.Query().Get("name"),
+			"alert":          c.Request.URL.Query().Has("alert"),
+		}
+
+		wd, _ := os.Getwd()
+		t, err := template.ParseFiles(wd + "/resources/views/temp.html")
+
+		if err != nil {
+			Logger.Get().Info("Parse error " + err.Error())
+			c.String(200, err.Error())
+			return
+		}
+
+		err = t.Execute(c.Writer, renderMap)
+		if err != nil {
+			Logger.Get().Info("Template Err " + err.Error())
+		}
+	})
+
+	engine.GET("/render/view/gin", func(c *gin.Context) {
+		renderMap := map[string]interface{}{
+			"render_profile": c.Request.URL.Query().Has("render_profile"),
+			"render_name":    c.Request.URL.Query().Has("render_name"),
+			"name":           c.Request.URL.Query().Get("name"),
+		}
+
+		//wd, _ := os.Getwd()
+		c.HTML(200, "temp.html", renderMap)
+	})
+
+	engine.GET("/api/rzp/v1/internal/account/config", func(c *gin.Context) {
+		strRes := `{"id":"10000000000000","name":"Test Account","brand_color":"#2371EC","handle":null,"transaction_report_email":["test@razorpay.com"],"logo_url":null,"invoice_label_field":null,"auto_capture_late_auth":false,"fee_credits_threshold":null,"amount_credits_threshold":null,"refund_credits_threshold":null,"balance_threshold":null,"display_name":null,"default_refund_speed":"normal","fee_bearer":"platform","billing_label":"Test Account","website":"http://abc.com","receipt_email_enabled":true,"parent_id":null,"international":false,"convert_currency":false,"category":"5691","logo_large_size_url":null,"rs_filter":true,"max_payment_amount":50000000,"max_international_payment_amount":50000000,"is_suspended":false,"is_live":true,"org_id":"100000razorpay","org_custom_code":"rzp","branding_logo":null,"login_logo":"","country_code":"IN","currency_code":"INR","org_name":"Razorpay Software Private Ltd","policy_url":null,"time_zone":"Asia/Kolkata","custom_org_branding":false,"methods":{"entity":"methods","upi":true},"mcc":"5691"}`
+		res := map[string]interface{}{}
+		json.Unmarshal([]byte(strRes), &res)
+		c.JSON(http.StatusOK, res)
+	})
+
+	engine.POST("/api/rzp/v1/merchant/analytics", func(c *gin.Context) {
+		strRes := `{"current":{"total":1,"last_updated_at":1707660539,"result":[{"value":1100}]},"previous":{"total":1,"last_updated_at":1707660539,"result":[{"value":1000}]},"current_histogram":{"total":7,"last_updated_at":1707660539,"result":[{"timestamp":1707157800,"value":100},{"timestamp":1705257000,"value":200},{"timestamp":1705602600,"value":100},{"timestamp":1706034600,"value":300},{"timestamp":1706725800,"value":100},{"timestamp":1706466600,"value":200},{"timestamp":1705516200,"value":100}]},"previous_histogram":{"last_updated_at":1707660539,"result":[{"timestamp":1707157800,"value":100},{"timestamp":1705257000,"value":200},{"timestamp":1705602600,"value":100},{"timestamp":1706034600,"value":200},{"timestamp":1706725800,"value":100},{"timestamp":1706466600,"value":200},{"timestamp":1705516200,"value":100}]}}`
+		res := map[string]interface{}{}
+		json.Unmarshal([]byte(strRes), &res)
+		c.JSON(http.StatusOK, res)
+	})
+
+	engine.POST("/care/rzp/twirp/rzp.care.dashboard.home.v1.HomeService/GetMerchantKeyUpdate", func(c *gin.Context) {
+		strRes := `{"data":[{"title":"2 Payment failure occured","message":"Review recent payment failures due to customer, bank, or business related issues","action":"payment_failed","params":{"from":"1706207400","to":"1706898599","status":"failed"},"type":"failed"},{"title":"1 Payment failure occured","message":"Review recent payment failures due to customer, bank, or business related issues","action":"payment_details","params":{"payment_id":"pay_Ixasdadadas"},"type":"failed"},{"title":"International payment enabled","message":"Accept payments via payment gateway, payment pages, payment links, and invoices","action":"international","params":{},"type":"info"},{"title":"Action required on your request to increase transaction limit","message":"Need more information","action":"international","params":{},"type":"need_clarification"}]}`
+		res := map[string]interface{}{}
+		json.Unmarshal([]byte(strRes), &res)
+		c.JSON(http.StatusOK, res)
+	})
+
+	engine.POST("/care/rzp/twirp/rzp.care.dashboard.home.v1.HomeService/GetMerchantSettlementOverview", func(c *gin.Context) {
+		strRes := `{"is_transacted":true,"is_settlement":true,"settlement_schedule":"FLBYKXvweeGWrV","settlement":{"current_balance":"60000","current_balance_currency":"INR","settlement_currency":"INR","today":{"total_amount":"1002","total_count":"9","delayed_total_amount":"800","delayed_count":"5","failed_total_amount":"0","failed_count":"0","created_total_amount":"0","created_count":"0","processed_total_amount":"202","processed_count":"4","title_key":"SETL_TODAY_MULTIPLE"},"previous":{"total_amount":"0","total_count":"1","created_at":"1659586909"},"upcoming_settlement":{"title_key":"UPCOMING_SETL_SKIPPED_NO_NEXT_SETTLEMENT","settlement_amount":"0","next_settlement_time":"0"}}}`
+		res := map[string]interface{}{}
+		json.Unmarshal([]byte(strRes), &res)
+		c.JSON(http.StatusOK, res)
+	})
+
+	engine.GET("/dashboard/rzp/user/session", func(c *gin.Context) {
+		strRes := `{"success":true,"data":{"token":"somerandomstringof36characterslength","email":"example@example.com","name":"John Doe","merchant_id":"10000000000000","role":"owner","merchant_name":"Merchant Name","logo":null,"user_id":"IY9DXiTMu25fDc"}}`
+		res := map[string]interface{}{}
+		json.Unmarshal([]byte(strRes), &res)
+		c.JSON(http.StatusOK, res)
 	})
 
 	engine.NoRoute(func(c *gin.Context) {

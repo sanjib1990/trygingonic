@@ -21,18 +21,30 @@ func RequestLogger() gin.HandlerFunc {
 		str.Write([]byte(": " + c.Request.URL.Path))
 
 		// append any query string
-		queries, _ := jsoniter.MarshalToString(c.Request.URL.Query())
-		str.Write([]byte(" | [QUERY]: " + queries))
+		//if c.Request.URL.Query() != nil {
+		//	queries, err := jsoniter.MarshalToString(c.Request.URL.Query())
+		//
+		//	if err == nil {
+		//		str.Write([]byte(" | [QUERY]: " + queries))
+		//	}
+		//}
 
 		// append path params:
-		param, _ := jsoniter.MarshalToString(c.Params)
-		str.Write([]byte(" | [PATH PARAMS]: " + param))
+		if c.Params != nil {
+			param, err := jsoniter.MarshalToString(c.Params)
+			if err == nil {
+				str.Write([]byte(" | [PATH PARAMS]: " + param))
+			}
+		}
 
 		// append body
-		body, _ := c.GetRawData()
-		var s strings.Builder
-		s.Write(body)
-		str.Write([]byte(" | [BODY]: " + s.String()))
+		if a, _ := c.GetRawData(); a != nil {
+			body, _ := c.GetRawData()
+			var s strings.Builder
+			s.Write(body)
+			str.Write([]byte(" | [BODY]: " + s.String()))
+		}
+
 		str.Write([]byte(" | [AGENT]: " + c.Request.UserAgent()))
 
 		Logger.Get().Info(str.String())
