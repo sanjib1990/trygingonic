@@ -27,3 +27,6 @@ trygonic
 *.iml
 out
 gen
+
+vendor
+bin

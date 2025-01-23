@@ -13,7 +13,7 @@ RUN apk update  \
     && go build -race -o runner .
 
 FROM alpine:3.14.0
-COPY --from=builder /build/runner /app/
+COPY --from=builder /bin/runner /app/
 WORKDIR /app
 
 CMD [ "./runner" ]

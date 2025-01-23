@@ -22,6 +22,7 @@ func Init() *gin.Engine {
 	engine.Use(gin.Recovery())
 	engine.Use(middlewares.RequestLogger())
 	engine.Use(middlewares.ResponseLogger())
+	engine.LoadHTMLGlob("resources/**/*")
 
 	// Register routes
 	RegisterRoutes(engine)
